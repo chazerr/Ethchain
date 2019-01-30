@@ -14,14 +14,20 @@ class Block{
     }
 
     static mineBlock({lastBlock, data}) {
-        const timestamp = Date.now();
+        let hash, timestamp;
         const lastHash = lastBlock.hash;
+        const {diff} = lastBlock;
+        let nonce = 0;
 
-        return new this({
-            timestamp: Date.now(),
-            lastHash: lastBlock.hash,
-            data,
-            hash: cryptoHash(timestamp, lastHash, data)
+        do{
+            nonce++;
+            timestamp = Date.now()
+            hash = cryptoHash(timestamp, lastHash, data, nonce, diff);
+        }while (hash.substring(0,diff) !== '0'.repeat(diff));
+        
+        
+
+        return new this({timestamp, lastHash, data, diff, nonce, hash
         });
     }
 }
